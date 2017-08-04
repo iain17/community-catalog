@@ -34,3 +34,4 @@ volumes:
     driver: ${volume_driver}
     driver_opts:
       size: ${volume_size}
+      shared: true
