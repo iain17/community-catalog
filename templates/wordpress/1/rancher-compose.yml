@@ -47,7 +47,7 @@ catalog:
       label: "WordPress application password"
       required: true
       default: "bitnami"
-      type: "string"       
+      type: "string"
     - variable: volume_driver
       description: "Volume driver to use with this service"
       label: "Volume driver"
@@ -59,6 +59,12 @@ catalog:
         - rancher-nfs
         - rancher-efs
         - rancher-ebs
+    - variable: volume_size
+      description: "In case you use rancher-ebs, how large should the volume be?"
+      label: "Volume size"
+      required: false
+      default: 4
+      type: "int"    
 services:
   wordpress-lb:
     scale: 1

@@ -28,5 +28,9 @@ services:
 volumes:
   mariadb_data:
     driver: ${volume_driver}
+    driver_opts:
+      size: ${volume_size}
   wordpress_data:
     driver: ${volume_driver}
+    driver_opts:
+      size: ${volume_size}
