@@ -23,8 +23,8 @@ portworx:
      - /var/run/docker.sock:/var/run/docker.sock
      - /var/cores:/var/cores
   command: -c ${cluster_id} -k etcd://etcd:2379 ${use_disks}
-  depends_on:
-      - etcd
+  links:
+    - etcd
 etcd:
   image: rancher/etcd:v2.3.0
   labels:
