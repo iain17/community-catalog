@@ -11,18 +11,12 @@
       type: "string"
       required: true
       default: ""
-    - variable: kvdb
-      description: "Key-value database, accessibe to all nodes in PX cluster (Ex: 'etcd://10.0.0.42:4001')"
-      label: "Key-Value Database"
-      type: "string"
-      required: true
-      default: ""
     - variable: use_disks
       description: "Cmdline args for disks to use. Ex: '-a' for all available, or '-s /dev/sdX' for each individual disk"
       label: "Use Disks"
       type: "string"
       required: true
-      default: "-s /dev/xvdb"
+      default: "-a"
     - variable: header_dir
       description: "Directory where kernel headers can be found.  Default is '/usr/src'.  For CoreOS use '/lib/modules'"
       label: "Headers Directory"

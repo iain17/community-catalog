@@ -3,7 +3,7 @@ portworx:
     io.rancher.container.create_agent: 'true'
     io.rancher.scheduler.global: 'true'
     io.rancher.container.pull_image: 'always'
-  image: portworx/px-dev:edge
+  image: portworx/px-dev:1.2.9
   container_name: px
   ipc: host
   net: host
@@ -22,4 +22,45 @@ portworx:
      - /opt/pwx/bin:/export_bin:shared
      - /var/run/docker.sock:/var/run/docker.sock
      - /var/cores:/var/cores
-  command: -c ${cluster_id} -k ${kvdb} ${use_disks}
+  command: -c ${cluster_id} -k etcd://etcd:2379 ${use_disks}
+  depends_on:
+      - etcd
+etcd:
+  image: rancher/etcd:v2.3.0
+  labels:
+    io.rancher.sidekicks: data
+    # try not to schedule etcd nodes on the same host
+    io.rancher.scheduler.affinity:container_label_soft_ne: etcd=node
+    etcd: node
+  expose:
+    - "2379"
+    - "2380"
+  environment:
+    ETCDCTL_ENDPOINT: http://etcd:2379
+  volumes_from:
+    - data
+# containerize data volume to enable restarts and upgrades
+data:
+  image: busybox
+  command: /bin/true
+  net: none
+  volumes:
+    - /data
+  labels:
+    io.rancher.container.start_once: 'true'
+
+# Discovery containers are used for bootstrapping a cluster.
+# They will shutdown once this process is completed.
+etcd-discovery:
+  image: rancher/etcd:v2.3.0
+  command: discovery_node
+  labels:
+    io.rancher.container.start_once: 'true'
+    io.rancher.sidekicks: bootstrap
+bootstrap:
+  image: rancher/etcd:v2.3.0
+  command: bootstrap ${REPLICAS}
+  links:
+    - etcd-discovery
+  labels:
+    io.rancher.container.start_once: 'true'
